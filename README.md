@@ -49,19 +49,28 @@ Call and SMS go through a voice confirm gate. SOS calls the primary contact and 
 
 ## How to run
 
-Needs Android Studio (Ladybug or newer), JDK 17, Android SDK 36, NDK, and an **arm64-v8a** phone (Android 10+). x86 emulators are a poor fit: the app filters ABI to `arm64-v8a`.
+This is the path that works on a teammate checkout. It is not a complete list of every phone, OS, or Gradle failure.
+
+### What you need
+
+| Item | Detail |
+|---|---|
+| Computer | macOS, Linux, or Windows with ~8 GB free RAM (Gradle heap is 4 GB in `gradle.properties`) |
+| JDK | 17. Android Studio’s bundled JBR is enough |
+| Android Studio | Ladybug or newer, SDK 36, Build-Tools, NDK, Platform-Tools (`adb`) |
+| Phone | **arm64-v8a**, Android 10+ (API 29). The app’s `abiFilters` is `arm64-v8a` only |
+| Disk | Phone: several GB free. A debug APK with bundled weights is a few GB. Laptop: same if you copy the GGUF |
+| Network | First Gradle sync (JitPack / Google Maven). Hybrid and medicine naming need internet |
+
+x86 / x86_64 emulators and 32-bit phones will not install this ABI. A stock Pixel emulator is usually x86_64.
+
+A missing `sherpa-onnx/` folder after clone is normal. That tree is not a Gradle module. Native STT/TTS come from the JitPack AAR `com.github.k2-fsa.sherpa-onnx:sherpa-onnx:v1.13.5`.
 
 ### 1. Clone
 
 ```bash
-git clone --recurse-submodules https://github.com/sharvilmane1216/iqoo-hackathon.git
+git clone https://github.com/sharvilmane1216/iqoo-hackathon.git
 cd iqoo-hackathon
-```
-
-If you already cloned without submodules:
-
-```bash
-git submodule update --init --recursive
 ```
 
 ### 2. Local config
@@ -70,47 +79,71 @@ git submodule update --init --recursive
 cp local.defaults.properties local.properties
 ```
 
-Open `local.properties` and set:
+`local.properties` must contain the SDK path. Android Studio writes `sdk.dir` when you open the repo root. On a command-line-only machine, set it yourself:
 
 ```
-sdk.dir=/path/to/Android/sdk
+sdk.dir=/Users/YOU/Library/Android/sdk
 CALLMISSED_API_KEY=cm_your_key
 ```
 
-Get a key at [console.callmissed.com](https://console.callmissed.com) with `llm`, `stt`, `tts`, and `search`. `local.properties` is gitignored. Do not commit a real key. Without a key, cloud features stay off and the app uses the on-device path only.
+Typical `sdk.dir` values:
 
-Android Studio writes `sdk.dir` for you if you open the project once (File → Open the repo root).
+- macOS: `/Users/YOU/Library/Android/sdk`
+- Linux: `/home/YOU/Android/sdk`
+- Windows: `C:\\Users\\YOU\\AppData\\Local\\Android\\Sdk`
 
-### 3. On-device model files
+Get a key at [console.callmissed.com](https://console.callmissed.com) with `llm`, `stt`, `tts`, and `search`. `local.properties` is gitignored. Do not commit a real key.
 
-Large weights are not in git (GitHub rejects files over 100 MB). Put these on disk before a full offline build:
+**No key:** Gradle still builds (`placeholder`). Cloud chat, cloud STT, cloud TTS, search, and medicine brand extract stay off. Offline talk still needs local models.
 
-| File | Use |
+**Key but no network:** Hybrid falls back to the on-device path.
+
+**CallMissed free-tier limits** are small (order of tens of STT/TTS calls per month on the free plan). A long Hybrid demo can hit the quota. Check remaining usage in Settings.
+
+### 3. Model files (two ways to run)
+
+**A. Hybrid-only (smaller APK, needs key + internet)**  
+You can skip the 2.2 GB GGUF. Talk uses CallMissed. Offline mode and offline STT/TTS will be weak or silent if the large ONNX/GGUF files are absent.
+
+**B. Full offline / Hybrid fallback**  
+GitHub rejects files over 100 MB. Copy these onto the machine that builds the APK:
+
+| Path under `app/src/main/assets/models/` | Use |
 |---|---|
-| `app/src/main/assets/models/Qwen3.5-4B-Instruct-Q4_K_M.gguf` | Local LLM |
-| `app/src/main/assets/models/indicconformer-hi-int8/model.onnx` | Hindi STT |
-| `app/src/main/assets/models/hi-hinglish-swift/decoder.int8.onnx` | Hinglish STT |
-| `app/src/main/assets/models/kokoro-int8-multi-lang-v1_0/model.int8.onnx` | Local TTS |
+| `Qwen3.5-4B-Instruct-Q4_K_M.gguf` (~2.2 GB) | Local LLM |
+| `indicconformer-hi-int8/model.onnx` (~188 MB) | Hindi STT |
+| `hi-hinglish-swift/decoder.int8.onnx` (~125 MB) | Hinglish STT |
+| `kokoro-int8-multi-lang-v1_0/model.int8.onnx` (~109 MB) | Local TTS |
 
-The repo already has the smaller sidecar files (`tokens.txt`, Zipformer, Piper, Silero). Copy the four files above from a teammate machine that already built the APK, or fetch related weights with:
+The repo already has smaller sidecars (Zipformer, Piper, Silero, `tokens.txt`). At first launch the app copies `assets/models` into app files (`ModelPaths.stageBundledAssets`).
+
+Do **not** expect `./scripts/download_models.sh` to fill those asset paths. That script writes a **desktop** folder named `models/` and currently fetches the **2B** GGUF (`Qwen3.5-2B-Instruct-Q4_K_M.gguf`), not the 4B file the app loads. After it finishes:
 
 ```bash
-./scripts/download_models.sh
+# optional: push the desktop tree onto a phone that already has the app installed
+./scripts/push_models.sh models
 ```
 
-Then place the listed files at those exact paths.
+The app adopts files from  
+`/sdcard/Android/data/com.aasra.companion/files/models/`  
+on the next launch (`ModelPaths.adoptAdbPushedFiles`). Hashes and sizes must match `ModelRegistry`.
+
+Qwen 4B URL used by the app:  
+`https://huggingface.co/TheStageAI/Qwen3.5-4B-GGUF/resolve/9e325bb0db1f4eb8a51450142227bb6a7e4d37f1/Qwen3.5-4B-M-TS-Q4_K_M.gguf`
+
+Low-RAM phones: the registry also has `Qwen3.5-0.8B-Instruct-Q4_K_M.gguf`. A 6 GB phone may fail to load the 4B model.
 
 ### 4. Build and install
 
 **Android Studio**
 
-1. Open the repo root (the folder with `settings.gradle.kts`).
-2. Trust the Gradle project and wait for sync.
-3. Plug in an arm64 phone, enable USB debugging, accept the RSA prompt.
-4. Select the `app` run configuration.
-5. Run (green play). Studio installs `com.aasra.companion` and opens `MainActivity`.
+1. File → Open the repo root (`settings.gradle.kts` is there).
+2. Trust the Gradle project. First sync needs network (Google Maven + JitPack).
+3. USB debugging on, cable in, accept the RSA fingerprint on the phone.
+4. Run configuration: `app`.
+5. Run. That installs `com.aasra.companion` and starts `MainActivity`.
 
-**Command line**
+**macOS command line**
 
 ```bash
 export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
@@ -120,21 +153,79 @@ adb install -r -g --no-streaming app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.aasra.companion/.MainActivity
 ```
 
-`-g` grants runtime permissions at install. On some phones (including some iQOO / vivo builds) the OS still shows a mic or phone-permission dialog the first time you talk or call.
+**Linux:** point `JAVA_HOME` at JDK 17 or Studio’s JBR, then the same `./gradlew` / `adb` commands.
 
-The debug APK is large (bundled models, a few GB) if the GGUF and ONNX files are present. `--no-streaming` avoids adb timeouts on a big install.
+**Windows (PowerShell):**
+
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+.\gradlew.bat :app:assembleDebug
+adb devices
+adb install -r -g --no-streaming app\build\outputs\apk\debug\app-debug.apk
+adb shell am start -n com.aasra.companion/.MainActivity
+```
+
+More than one device or emulator:
+
+```bash
+adb devices
+adb -s DEVICE_SERIAL install -r -g --no-streaming app/build/outputs/apk/debug/app-debug.apk
+adb -s DEVICE_SERIAL shell am start -n com.aasra.companion/.MainActivity
+```
+
+If `adb devices` says `unauthorized`, unlock the phone and accept the USB debugging prompt. If it says `offline`, unplug, revoking USB debugging and replugging often clears it.
+
+`-g` asks the installer to grant runtime permissions. Some iQOO / vivo builds still show a mic, phone, or SMS dialog later.
+
+`--no-streaming` is for a multi-GB APK. Without the large weights the APK is much smaller and a normal `adb install -r` is enough.
+
+`INSTALL_FAILED_INSUFFICIENT_STORAGE`: free space on the phone, then install again.  
+`INSTALL_FAILED_NO_MATCHING_ABIS`: the device is not arm64.
 
 ### 5. First launch
 
-1. Allow microphone when asked. Talk will not hear you without it.
-2. Finish onboarding (name, Hindi or English, emergency contact if you want SOS).
+1. Allow **microphone**. Talk does nothing useful without it.
+2. Onboarding: language (Hindi or English), voice, name. Contacts can be skipped; SOS and family SMS then have no number.
 3. Home: **Talk to AASRA**, **Scan medicine**, **Reminders**, **Emergency assistance**.
-4. Settings: voice speed, Offline vs Hybrid, medicines, Health Connect, extra contacts.
-5. For Hybrid / cloud talk, the phone needs internet and a real `CALLMISSED_API_KEY`.
+4. Settings: speech speed, Offline vs Hybrid, medicines, Health, extra contacts, notification access, optional MCP tools.
+5. Hybrid needs internet **and** a real key baked into that APK (`BuildConfig.CALLMISSED_API_KEY`). Changing `local.properties` after install does nothing until you rebuild.
 
-Health numbers appear only if Health Connect (and a watch app, if you use one) already wrote steps, heart rate, or SpO₂.
+**Permissions the OS may still ask for**
 
-Emergency assistance opens a confirm dialog, then calls the primary contact and SMS saved contacts. It does not dial 112.
+| Permission | When |
+|---|---|
+| Microphone | Talk, wake word |
+| Camera | Scan / save medicine pack |
+| Phone / SMS / contacts | Call, SMS, SOS |
+| Notifications | Reminder alerts (Android 13+) |
+| Exact alarms | Timed reminders |
+| Location | SOS location text, if that path is used |
+| Health Connect | Steps, heart rate, SpO₂ |
+
+Health numbers stay empty unless Health Connect (and a watch companion, if you use one) already wrote data and the user allowed Aasra to read it.
+
+**Scan medicine** needs camera **and** internet (CallMissed names the brand). No key or no network → the pack flow asks for cloud. Check does not save. Save is Settings → Medicines → Save medicine pack.
+
+**Emergency assistance** is a confirm dialog, then a call to the primary contact and SMS to saved contacts. It does not dial 112. Do not confirm SOS on a phone that has real contacts unless you mean to place that call.
+
+### If something fails
+
+| What you see | What to check |
+|---|---|
+| Gradle: SDK location not found | `sdk.dir` in `local.properties` |
+| Gradle: invalid / wrong Java | JDK 17, `JAVA_HOME` |
+| Gradle: JitPack / sherpa unresolved | Network, `maven { url = uri("https://jitpack.io") }` already in `settings.gradle.kts` |
+| Sync OOM | Close other IDEs; heap is `-Xmx4g` |
+| `adb devices` empty | Cable, USB debugging, OEM USB driver on Windows |
+| Install ABI error | Use an arm64 phone, not an x86 emulator |
+| App opens, Talk is silent | Mic permission; Offline without models; Hybrid without key/network |
+| Offline Hindi unrecognised | Missing IndicConformer `model.onnx` |
+| Offline English unrecognised | Zipformer files present in assets (they are in git) |
+| Cloud replies stop mid-demo | CallMissed quota / rate limit |
+| Medicine says need internet | Hybrid/cloud key + network |
+| Reminders never fire | Exact-alarm and notification permission |
+| Health screen empty | Health Connect install + permission + a writer app |
+| `sherpa-onnx` folder empty | Ignore it for the app build |
 
 ## Run modes
 
