@@ -52,7 +52,10 @@ object CallMissedConfig {
     /** Key injected from local.properties at build time. Blank = not configured. */
     val apiKey: String get() = BuildConfig.CALLMISSED_API_KEY
 
-    val hasKey: Boolean get() = apiKey.isNotBlank() && apiKey != "\"\""
+    val hasKey: Boolean get() {
+        val key = apiKey.trim().removeSurrounding("\"")
+        return key.isNotBlank() && key != "placeholder" && !key.startsWith("cm_dummy")
+    }
 
     fun requireKey(): String {
         check(hasKey) { "CALLMISSED_API_KEY missing: set it in local.properties (never commit it)." }

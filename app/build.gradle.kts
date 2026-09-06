@@ -16,9 +16,7 @@ if (localPropsFile.exists()) {
 val callmissedKey: String =
     localProps.getProperty("CALLMISSED_API_KEY")
         ?: System.getenv("CALLMISSED_API_KEY")
-        ?: "placeholder"
-val callmissedKeyReady: Boolean =
-    callmissedKey.trim().removeSurrounding("\"").let { it.isNotBlank() && it != "placeholder" }
+        ?: "cm_dummy_get_your_key_from_callmissed"
 
 android {
     namespace = "com.aasra.companion"
@@ -59,19 +57,6 @@ android {
 kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-    }
-}
-
-gradle.taskGraph.whenReady {
-    val needsKey = gradle.taskGraph.allTasks.any {
-        it.name.startsWith("assemble") || it.name.startsWith("install") || it.name.startsWith("bundle")
-    }
-    if (needsKey) {
-        check(callmissedKeyReady) {
-            "CALLMISSED_API_KEY is required. Copy local.defaults.properties to local.properties " +
-                "and set CALLMISSED_API_KEY=cm_... from console.callmissed.com " +
-                "(or export CALLMISSED_API_KEY). Do not commit the key."
-        }
     }
 }
 

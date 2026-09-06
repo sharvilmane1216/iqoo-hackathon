@@ -35,17 +35,16 @@ class AppContainer(app: Application) {
     val appScope = CoroutineScope(SupervisorJob())
     val prefs = UserPreferencesRepository(app)
 
-    /** Cloud key from BuildConfig (local.properties -> "placeholder" fallback). */
+    /** Cloud key from BuildConfig (local.properties → dummy fallback). */
     val callmissedApiKey: String = BuildConfig.CALLMISSED_API_KEY
 
     /**
-     * Live cloud client, or null when no real key is configured (fresh
-     * checkout with the "placeholder" fallback, or blank). Never crashes:
-     * every cloud feature checks this for null and degrades to offline.
+     * Live cloud client, or null when the dummy / blank key is still in use.
+     * Get a real key from https://console.callmissed.com
      */
     val cloud: CallMissedClient? = run {
         val key = callmissedApiKey.trim().removeSurrounding("\"")
-        if (key.isBlank() || key == "placeholder") return@run null
+        if (key.isBlank() || key == "placeholder" || key.startsWith("cm_dummy")) return@run null
         try {
             CallMissedClient(apiKey = key)
         } catch (_: Exception) {

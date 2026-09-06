@@ -3,7 +3,9 @@
 **Team Turtle** — [iQOO City Battles 2026](https://github.com/sharvilmane1216/iqoo-hackathon)  
 Voice companion for elderly users. Hindi + English. No Aasra server.
 
-Package `com.aasra.companion`. The phone talks to Android (calls, SMS, alarms, Health Connect) and to [CallMissed](https://api.callmissed.com). **A CallMissed API key is required** — Hybrid talk, cloud STT/TTS, search, and medicine pack naming all use it. Put it in `local.properties` (not git). `./gradlew :app:assembleDebug` and Android Studio Run stop if the key is missing or still `placeholder`.
+Package `com.aasra.companion`. The phone talks to Android (calls, SMS, alarms, Health Connect) and to [CallMissed](https://api.callmissed.com).
+
+The repo ships a **dummy** key (`cm_dummy_get_your_key_from_callmissed`) so the project builds. Hybrid talk, cloud STT/TTS, search, and medicine naming need a **real** key: create one at [console.callmissed.com](https://console.callmissed.com) (`llm`, `stt`, `tts`, `search`), put it in `local.properties`, rebuild. Do not commit a real key.
 
 ## For judges
 
@@ -44,7 +46,7 @@ Have Hybrid + a CallMissed key on the APK, one saved emergency contact you are w
 - Screenshots / fallback video — capture on the demo iQOO; do not commit a staged mock UI.
 - Release keystore — keep it off git.
 - Model files over 100 MB — copy from the build laptop (How to run §3).
-- `CALLMISSED_API_KEY` — `local.properties` only.
+- Real `CALLMISSED_API_KEY` — dummy only in git; your `cm_...` key stays in `local.properties`.
 
 ## What it does
 
@@ -102,7 +104,7 @@ This is the path that works on a teammate checkout. It is not a complete list of
 | Android Studio | Ladybug or newer, SDK 36, Build-Tools, NDK, Platform-Tools (`adb`) |
 | Phone | **arm64-v8a**, Android 10+ (API 29). The app’s `abiFilters` is `arm64-v8a` only |
 | Disk | Phone: several GB free. A debug APK with bundled weights is a few GB. Laptop: same if you copy the GGUF |
-| CallMissed key | **Required.** `CALLMISSED_API_KEY=cm_...` in `local.properties` or the environment. Create one at [console.callmissed.com](https://console.callmissed.com) with `llm`, `stt`, `tts`, and `search`. |
+| CallMissed key | Dummy is already in `local.defaults.properties`. Get a real key at [console.callmissed.com](https://console.callmissed.com) (`llm`, `stt`, `tts`, `search`) and put it in `local.properties`. |
 | Network | First Gradle sync (JitPack / Google Maven). Hybrid talk and medicine naming need internet |
 
 x86 / x86_64 emulators and 32-bit phones will not install this ABI. A stock Pixel emulator is usually x86_64.
@@ -116,25 +118,25 @@ git clone https://github.com/sharvilmane1216/iqoo-hackathon.git
 cd iqoo-hackathon
 ```
 
-### 2. CallMissed key (required)
+### 2. CallMissed key
+
+The committed dummy key is enough to **compile and install**. Cloud features stay off until you replace it.
 
 ```bash
 cp local.defaults.properties local.properties
 ```
 
-Open `local.properties` and set both:
+1. Open [console.callmissed.com](https://console.callmissed.com) and create an API key (`llm`, `stt`, `tts`, `search`).
+2. In `local.properties` set:
 
 ```
 sdk.dir=/Users/YOU/Library/Android/sdk
-CALLMISSED_API_KEY=cm_your_key
+CALLMISSED_API_KEY=cm_your_real_key
 ```
 
-1. Sign up at [console.callmissed.com](https://console.callmissed.com).
-2. Create an API key with `llm`, `stt`, `tts`, and `search`.
-3. Paste the `cm_...` value. Do not leave `placeholder`.
-4. Rebuild after you change the key. The value is baked into `BuildConfig` at compile time.
+3. Rebuild. The key is baked into `BuildConfig` at compile time.
 
-`local.properties` is gitignored. Do not commit a real key. You can also `export CALLMISSED_API_KEY=cm_...` instead of the file.
+`local.properties` is gitignored. Do not commit a real key.
 
 Typical `sdk.dir` values:
 
@@ -142,17 +144,17 @@ Typical `sdk.dir` values:
 - Linux: `/home/YOU/Android/sdk`
 - Windows: `C:\\Users\\YOU\\AppData\\Local\\Android\\Sdk`
 
-Android Studio writes `sdk.dir` when you open the repo root. The key you must add yourself.
+Android Studio writes `sdk.dir` when you open the repo root.
 
-**No key / `placeholder`:** `assembleDebug`, `installDebug`, and Run fail with `CALLMISSED_API_KEY is required`.
+**Dummy key still in place:** app installs; Hybrid talk, cloud STT/TTS, search, and medicine naming stay off.
 
-**Key but no network:** Hybrid falls back to the on-device path (local models).
+**Real key but no network:** Hybrid falls back to the on-device path (local models).
 
 **CallMissed free-tier limits** are small (order of tens of STT/TTS calls per month on the free plan). A long Hybrid demo can hit the quota. Check remaining usage in Settings.
 
 ### 3. Model files (two ways to run)
 
-**A. Hybrid-only (smaller APK; key + internet still required)**  
+**A. Hybrid-only (smaller APK; real CallMissed key + internet)**  
 You can skip the 2.2 GB GGUF. Talk and medicine naming use CallMissed. Offline mode and offline STT/TTS will be weak or silent if the large ONNX/GGUF files are absent.
 
 **B. Full offline / Hybrid fallback**  
@@ -262,7 +264,7 @@ Health numbers stay empty unless Health Connect (and a watch companion, if you u
 
 | What you see | What to check |
 |---|---|
-| `CALLMISSED_API_KEY is required` | Copy `local.defaults.properties` → `local.properties`, set a real `cm_...` key, rebuild |
+| Cloud talk / medicine say they need internet or do nothing | Dummy key still set — get a real key from [console.callmissed.com](https://console.callmissed.com), put it in `local.properties`, rebuild |
 | Gradle: SDK location not found | `sdk.dir` in `local.properties` |
 | Gradle: invalid / wrong Java | JDK 17, `JAVA_HOME` |
 | Gradle: JitPack / sherpa unresolved | Network, `maven { url = uri("https://jitpack.io") }` already in `settings.gradle.kts` |

@@ -13,7 +13,9 @@ if (localFile.exists()) {
 }
 // Never hardcode the key. Falls back to env var so CI works without local.properties.
 val cmKey: String =
-    (localProps.getProperty("CALLMISSED_API_KEY") ?: System.getenv("CALLMISSED_API_KEY") ?: "")
+    (localProps.getProperty("CALLMISSED_API_KEY")
+        ?: System.getenv("CALLMISSED_API_KEY")
+        ?: "cm_dummy_get_your_key_from_callmissed")
 
 android {
     namespace = "com.aasra.cloud"
