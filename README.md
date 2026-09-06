@@ -3,7 +3,7 @@
 **Team Turtle** — [iQOO City Battles 2026](https://github.com/sharvilmane1216/iqoo-hackathon)  
 Voice companion for elderly users. Hindi + English. No Aasra server.
 
-Package `com.aasra.companion`. The phone talks to Android (calls, SMS, alarms, Health Connect) and, when a key is set, to [CallMissed](https://api.callmissed.com).
+Package `com.aasra.companion`. The phone talks to Android (calls, SMS, alarms, Health Connect) and to [CallMissed](https://api.callmissed.com). **A CallMissed API key is required** — Hybrid talk, cloud STT/TTS, search, and medicine pack naming all use it. Put it in `local.properties` (not git). `./gradlew :app:assembleDebug` and Android Studio Run stop if the key is missing or still `placeholder`.
 
 ## For judges
 
@@ -102,7 +102,8 @@ This is the path that works on a teammate checkout. It is not a complete list of
 | Android Studio | Ladybug or newer, SDK 36, Build-Tools, NDK, Platform-Tools (`adb`) |
 | Phone | **arm64-v8a**, Android 10+ (API 29). The app’s `abiFilters` is `arm64-v8a` only |
 | Disk | Phone: several GB free. A debug APK with bundled weights is a few GB. Laptop: same if you copy the GGUF |
-| Network | First Gradle sync (JitPack / Google Maven). Hybrid and medicine naming need internet |
+| CallMissed key | **Required.** `CALLMISSED_API_KEY=cm_...` in `local.properties` or the environment. Create one at [console.callmissed.com](https://console.callmissed.com) with `llm`, `stt`, `tts`, and `search`. |
+| Network | First Gradle sync (JitPack / Google Maven). Hybrid talk and medicine naming need internet |
 
 x86 / x86_64 emulators and 32-bit phones will not install this ABI. A stock Pixel emulator is usually x86_64.
 
@@ -115,18 +116,25 @@ git clone https://github.com/sharvilmane1216/iqoo-hackathon.git
 cd iqoo-hackathon
 ```
 
-### 2. Local config
+### 2. CallMissed key (required)
 
 ```bash
 cp local.defaults.properties local.properties
 ```
 
-`local.properties` must contain the SDK path. Android Studio writes `sdk.dir` when you open the repo root. On a command-line-only machine, set it yourself:
+Open `local.properties` and set both:
 
 ```
 sdk.dir=/Users/YOU/Library/Android/sdk
 CALLMISSED_API_KEY=cm_your_key
 ```
+
+1. Sign up at [console.callmissed.com](https://console.callmissed.com).
+2. Create an API key with `llm`, `stt`, `tts`, and `search`.
+3. Paste the `cm_...` value. Do not leave `placeholder`.
+4. Rebuild after you change the key. The value is baked into `BuildConfig` at compile time.
+
+`local.properties` is gitignored. Do not commit a real key. You can also `export CALLMISSED_API_KEY=cm_...` instead of the file.
 
 Typical `sdk.dir` values:
 
@@ -134,18 +142,18 @@ Typical `sdk.dir` values:
 - Linux: `/home/YOU/Android/sdk`
 - Windows: `C:\\Users\\YOU\\AppData\\Local\\Android\\Sdk`
 
-Get a key at [console.callmissed.com](https://console.callmissed.com) with `llm`, `stt`, `tts`, and `search`. `local.properties` is gitignored. Do not commit a real key.
+Android Studio writes `sdk.dir` when you open the repo root. The key you must add yourself.
 
-**No key:** Gradle still builds (`placeholder`). Cloud chat, cloud STT, cloud TTS, search, and medicine brand extract stay off. Offline talk still needs local models.
+**No key / `placeholder`:** `assembleDebug`, `installDebug`, and Run fail with `CALLMISSED_API_KEY is required`.
 
-**Key but no network:** Hybrid falls back to the on-device path.
+**Key but no network:** Hybrid falls back to the on-device path (local models).
 
 **CallMissed free-tier limits** are small (order of tens of STT/TTS calls per month on the free plan). A long Hybrid demo can hit the quota. Check remaining usage in Settings.
 
 ### 3. Model files (two ways to run)
 
-**A. Hybrid-only (smaller APK, needs key + internet)**  
-You can skip the 2.2 GB GGUF. Talk uses CallMissed. Offline mode and offline STT/TTS will be weak or silent if the large ONNX/GGUF files are absent.
+**A. Hybrid-only (smaller APK; key + internet still required)**  
+You can skip the 2.2 GB GGUF. Talk and medicine naming use CallMissed. Offline mode and offline STT/TTS will be weak or silent if the large ONNX/GGUF files are absent.
 
 **B. Full offline / Hybrid fallback**  
 GitHub rejects files over 100 MB. Copy these onto the machine that builds the APK:
@@ -230,7 +238,7 @@ If `adb devices` says `unauthorized`, unlock the phone and accept the USB debugg
 2. Onboarding: language (Hindi or English), voice, name. Contacts can be skipped; SOS and family SMS then have no number.
 3. Home: **Talk to AASRA**, **Scan medicine**, **Reminders**, **Emergency assistance**.
 4. Settings: speech speed, Offline vs Hybrid, medicines, Health, extra contacts, notification access, optional MCP tools.
-5. Hybrid needs internet **and** a real key baked into that APK (`BuildConfig.CALLMISSED_API_KEY`). Changing `local.properties` after install does nothing until you rebuild.
+5. Hybrid needs internet **and** the CallMissed key that was baked into that APK at build time. Changing `local.properties` after install does nothing until you rebuild.
 
 **Permissions the OS may still ask for**
 
@@ -246,7 +254,7 @@ If `adb devices` says `unauthorized`, unlock the phone and accept the USB debugg
 
 Health numbers stay empty unless Health Connect (and a watch companion, if you use one) already wrote data and the user allowed Aasra to read it.
 
-**Scan medicine** needs camera **and** internet (CallMissed names the brand). No key or no network → the pack flow asks for cloud. Check does not save. Save is Settings → Medicines → Save medicine pack.
+**Scan medicine** needs camera, internet, and the CallMissed key (CallMissed names the brand). Missing key or network → the pack flow asks for cloud. Check does not save. Save is Settings → Medicines → Save medicine pack.
 
 **Emergency assistance** is a confirm dialog, then a call to the primary contact and SMS to saved contacts. It does not dial 112. Do not confirm SOS on a phone that has real contacts unless you mean to place that call.
 
@@ -254,6 +262,7 @@ Health numbers stay empty unless Health Connect (and a watch companion, if you u
 
 | What you see | What to check |
 |---|---|
+| `CALLMISSED_API_KEY is required` | Copy `local.defaults.properties` → `local.properties`, set a real `cm_...` key, rebuild |
 | Gradle: SDK location not found | `sdk.dir` in `local.properties` |
 | Gradle: invalid / wrong Java | JDK 17, `JAVA_HOME` |
 | Gradle: JitPack / sherpa unresolved | Network, `maven { url = uri("https://jitpack.io") }` already in `settings.gradle.kts` |
