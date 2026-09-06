@@ -1,8 +1,50 @@
 # Aasra
 
-**Team Turtle** — iQOO City Battles 2026
+**Team Turtle** — [iQOO City Battles 2026](https://github.com/sharvilmane1216/iqoo-hackathon)  
+Voice companion for elderly users. Hindi + English. No Aasra server.
 
-On-device voice companion for Hindi and English. Package `com.aasra.companion`. There is no Aasra backend. The phone talks to Android (calls, SMS, alarms, Health Connect) and, when a key is set, to [CallMissed](https://api.callmissed.com).
+Package `com.aasra.companion`. The phone talks to Android (calls, SMS, alarms, Health Connect) and, when a key is set, to [CallMissed](https://api.callmissed.com).
+
+## For judges
+
+| | |
+|---|---|
+| One line | Speak, and the phone answers — time, reminders, medicines, family call — on-device first, CallMissed when Hybrid is online. |
+| Problem | Many older people cannot use small icons or English-only assistants. They need a large Talk button, Hindi, and family SOS they can confirm. |
+| Why iQOO | Snapdragon + 12 GB RAM can run Zipformer / IndicConformer / Qwen GGUF locally. Hybrid is the fallback if the venue Wi-Fi dies. |
+| No backend | Requirement: serverless. Key lives in `local.properties` → `BuildConfig` for the weekend only. |
+| Languages | Hindi and English in Settings. Home copy follows that choice. |
+| Safety | Call / SMS / SOS ask before they fire. SOS is the primary contact + SMS, not 112. The model prompt says not to give dosages. |
+
+**Do not tap Confirm on Emergency assistance** during a walkthrough unless you intend a real call and SMS.
+
+### 5-minute demo (rehearsed path)
+
+Have Hybrid + a CallMissed key on the APK, one saved emergency contact you are willing to use, one saved medicine, and Health Connect data if you want that screen.
+
+1. **Home** — large Talk control, Scan medicine, Reminders, red Emergency. Open Settings: name, Hindi/English, Offline vs Hybrid.
+2. **Offline proof** — Settings → Offline (or airplane mode). Talk: “What time is it?” / “अभी कितने बजे हैं?” Local STT + local answer.
+3. **Reminder** — “Remind me to drink water at 9 PM” or Hindi equivalent. Confirm if asked. Open Reminders and show the row.
+4. **Hybrid** — Settings → Hybrid, network on. Ask a short fact or greeting (not a dosage). Point at the streamed reply and spoken TTS.
+5. **Medicine** — Settings → Medicines → Save medicine pack (if not saved). Then Home → Scan medicine: brand from CallMissed, spoken “when to take”.
+6. **Call (stop at confirm)** — “Call [saved name].” Show the confirm chip. Say no / cancel so the dialer does not place a live call.
+7. **Emergency (stop at dialog)** — tap Emergency assistance. Show the confirm dialog. **Cancel.**
+8. **Health (optional)** — Settings → Health. Steps / heart rate / SpO₂ only if Health Connect already has records.
+
+**If venue Wi-Fi is down:** stay on steps 2–3 and 7 (Cancel). Offline time + reminder is the backup. A recorded screen video of the Hybrid turn is the second backup (not in this repo).
+
+**If Talk is silent:** mic permission, then Hybrid key + network, or the four large model files on the APK (see How to run).
+
+### Team
+
+**Team Turtle.** Repo: [sharvilmane1216/iqoo-hackathon](https://github.com/sharvilmane1216/iqoo-hackathon). Add teammate names here when the roster is public.
+
+### What we did not put in git
+
+- Screenshots / fallback video — capture on the demo iQOO; do not commit a staged mock UI.
+- Release keystore — keep it off git.
+- Model files over 100 MB — copy from the build laptop (How to run §3).
+- `CALLMISSED_API_KEY` — `local.properties` only.
 
 ## What it does
 
@@ -249,6 +291,6 @@ data/
 scripts/             model download helpers
 ```
 
-## License notes
+## License
 
-Third-party runtimes and model cards keep their own licenses (sherpa-onnx, Kokoro, Piper, Qwen, CallMissed terms).
+App code: [MIT](LICENSE) (Team Turtle, 2026). Third-party runtimes and model cards keep their own licenses (sherpa-onnx, Kokoro, Piper, Qwen, CallMissed terms).
