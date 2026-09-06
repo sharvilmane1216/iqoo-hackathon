@@ -1,0 +1,14 @@
+.worktrees/
+local.properties
+*.iml
+.gradle/
+build/
+local_defaults.properties
+.DS_Store
+**/.DS_Store
+
+# GitHub rejects blobs over 100 MB. Keep these on the build machine.
+*.gguf
+app/src/main/assets/models/indicconformer-hi-int8/model.onnx
+app/src/main/assets/models/hi-hinglish-swift/decoder.int8.onnx
+app/src/main/assets/models/kokoro-int8-multi-lang-v1_0/model.int8.onnx

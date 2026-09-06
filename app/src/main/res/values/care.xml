@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="care_card_title">Care card · %1$s</string>
+    <string name="care_writing">Writing what to do for %1$s…</string>
+    <string name="care_doctor_note">Aasra is not a doctor. Call your doctor if this lasts, gets worse, or you feel unsure. For sudden danger, use SOS or local emergency services.</string>
+    <string name="care_urgent_note">This can be urgent. Sit still, tell someone nearby, and use SOS or local emergency services now. Do not wait for Aasra.</string>
+
+    <string name="care_fever_title">Fever</string>
+    <string-array name="care_fever_steps">
+        <item>Sit or lie down in a cool room. Loosen tight clothes.</item>
+        <item>Sip water often. Rest. Use a lukewarm cloth on the forehead if it feels hot.</item>
+        <item>Take only fever medicine your own doctor already gave you, in the way they told you. Do not start a new medicine on your own.</item>
+        <item>Tell a family member. Call a doctor if the fever lasts more than two days, you feel confused, or breathing is hard.</item>
+    </string-array>
+
+    <string name="care_cough_title">Cough</string>
+    <string-array name="care_cough_steps">
+        <item>Sit upright. Sip warm water slowly.</item>
+        <item>Breathe steam from a bowl of hot water if it feels easy. Keep the face a safe distance from the water.</item>
+        <item>Rest your voice. Avoid smoke and dust.</item>
+        <item>Call a doctor if the cough lasts many days, there is blood, chest pain, or you cannot catch your breath.</item>
+    </string-array>
+
+    <string name="care_cold_title">Cold</string>
+    <string-array name="care_cold_steps">
+        <item>Rest. Keep warm, not sweaty.</item>
+        <item>Drink water or warm fluids through the day.</item>
+        <item>Blow the nose gently. Sleep with the head a little raised.</item>
+        <item>Call a doctor if fever is high, the face is very painful, or you feel worse after a few days.</item>
+    </string-array>
+
+    <string name="care_headache_title">Headache</string>
+    <string-array name="care_headache_steps">
+        <item>Sit in a quiet, dim room. Close the eyes for a few minutes.</item>
+        <item>Drink a glass of water. Eat a little if you have not eaten.</item>
+        <item>A cool cloth on the forehead can help. Do not take a new pain tablet unless your doctor already advised it.</item>
+        <item>Call a doctor or use SOS if the pain is sudden and very strong, you vomit, the neck is stiff, or one side feels weak.</item>
+    </string-array>
+
+    <string name="care_stomach_title">Stomach pain</string>
+    <string-array name="care_stomach_steps">
+        <item>Sit or lie with the knees a little bent. Loosen the belt.</item>
+        <item>Sip water. Skip heavy, spicy, or oily food for now.</item>
+        <item>Do not take a new tablet for the pain unless your doctor already told you to.</item>
+        <item>Call a doctor if the pain is severe, the belly is hard, there is blood, or you cannot keep water down.</item>
+    </string-array>
+
+    <string name="care_vomit_title">Vomiting</string>
+    <string-array name="care_vomit_steps">
+        <item>Sit up. After vomiting, rinse the mouth with water.</item>
+        <item>Wait a short while, then sip water slowly. Do not gulp.</item>
+        <item>Skip food until the stomach settles, then try a little plain food.</item>
+        <item>Call a doctor if vomiting does not stop, there is blood, or you feel very weak or dizzy.</item>
+    </string-array>
+
+    <string name="care_loose_title">Loose motion</string>
+    <string-array name="care_loose_steps">
+        <item>Drink water often, in small sips. Oral rehydration water from a chemist is useful if you have it.</item>
+        <item>Stay near a toilet. Rest.</item>
+        <item>Eat light food when you can. Avoid raw, oily, or very sweet food.</item>
+        <item>Call a doctor if there is blood, high fever, or you cannot drink, or this lasts more than a day.</item>
+    </string-array>
+
+    <string name="care_body_title">Body pain</string>
+    <string-array name="care_body_steps">
+        <item>Rest the sore part. Sit or lie in a comfortable position.</item>
+        <item>A warm cloth can ease stiffness. Move slowly after rest.</item>
+        <item>Take only pain medicine your doctor already gave you, as they told you.</item>
+        <item>Call a doctor if one side is weak, the chest also hurts, or you cannot walk.</item>
+    </string-array>
+
+    <string name="care_dizzy_title">Dizziness</string>
+    <string-array name="care_dizzy_steps">
+        <item>Sit or lie down at once. Do not stand up quickly.</item>
+        <item>Sip water. Eat a little if you have not eaten, unless a doctor told you not to.</item>
+        <item>Ask someone to stay with you. Stand only when the room feels steady.</item>
+        <item>Use SOS or call a doctor if you faint, the chest hurts, speech is slurred, or one side is weak.</item>
+    </string-array>
+
+    <string name="care_weak_title">Weakness</string>
+    <string-array name="care_weak_steps">
+        <item>Sit down. Do not walk far alone.</item>
+        <item>Sip water. If you take sugar medicines, check sugar the way your doctor taught you.</item>
+        <item>Tell a family member. Rest.</item>
+        <item>Call a doctor if you sweat a lot, shake, feel confused, or cannot stand.</item>
+    </string-array>
+
+    <string name="care_fall_title">After a fall</string>
+    <string-array name="care_fall_steps">
+        <item>Stay still for a moment. Check if the head, neck, or hip hurts badly.</item>
+        <item>If you can, roll to your side, then sit up slowly. Hold a chair or wall.</item>
+        <item>If you cannot get up, call out, use SOS, or phone family. Do not force a broken-feeling limb.</item>
+        <item>See a doctor after any fall that hits the head, if you feel dizzy, or you cannot bear weight.</item>
+    </string-array>
+
+    <string name="care_chest_title">Chest pain</string>
+    <string-array name="care_chest_steps">
+        <item>Sit still. Loosen tight clothes. Do not walk around.</item>
+        <item>Tell someone nearby. Use SOS or call local emergency services now.</item>
+        <item>If your doctor already gave you a heart tablet for this, take only that, as they taught you.</item>
+        <item>Stay sitting until help arrives.</item>
+    </string-array>
+
+    <string name="care_breath_title">Hard to breathe</string>
+    <string-array name="care_breath_steps">
+        <item>Sit upright. Open a window if the air is stuffy. Loosen the collar.</item>
+        <item>Breathe in slowly through the nose, out through the mouth.</item>
+        <item>Use SOS or local emergency services if breathing stays hard, the lips look blue, or you feel faint.</item>
+        <item>If you have an inhaler your doctor gave you, use it the way they taught you.</item>
+    </string-array>
+
+    <string name="care_unwell_title">Not feeling well</string>
+    <string-array name="care_unwell_steps">
+        <item>Sit or lie down. Rest. Loosen tight clothes.</item>
+        <item>Sip water. Note what you feel: pain, fever, dizziness, or something else.</item>
+        <item>Tell a family member. Take only medicine your doctor already gave you for this, as they told you.</item>
+        <item>Call a doctor if this gets worse, lasts, or you feel unsure. Use SOS for sudden chest pain, fainting, or if you cannot breathe.</item>
+    </string-array>
+</resources>

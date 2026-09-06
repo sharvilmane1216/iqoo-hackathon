@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_medicine_pack">दवाई की फोटो</string>
+    <string name="medicine_pack_title">दवाई की फोटो</string>
+    <string name="medicine_check_title">दवाई जाँचें</string>
+    <string name="medicine_save_title">दवाई पैक सहेजें</string>
+    <string name="medicine_back">वापस</string>
+    <string name="medicine_pack_detail">पैक की फोटो लें।</string>
+    <string name="medicine_check_detail">पैक की फोटो लें। छपा पाठ सर्वर को भेजा जाता है ताकि दवाई का नाम निकले। अगर वह नाम सहेजा है तो आसरा बताएगी कब लेनी है।</string>
+    <string name="medicine_save_detail">पैक की फोटो लें। छपा पाठ सर्वर को भेजा जाता है ताकि नाम निकले; आप कब लेनी है चुनें, फिर सहेजें।</string>
+    <string name="medicine_need_cloud">दवाई का नाम बताने के लिए इंटरनेट चाहिए। कनेक्शन जाँचें और फिर कोशिश करें।</string>
+    <string name="medicine_check_missing">यह पैक सहेजा नहीं है। सेटिंग्स, दवाईयाँ से सहेजें।</string>
+    <string name="medicine_already_saved">यह पैक पहले से सहेजा है।</string>
+    <string name="medicine_take_pack">पैक की फोटो लें</string>
+    <string name="medicine_choose_pack">पैक की फोटो चुनें</string>
+    <string name="medicine_reading">पैक पढ़ रही हूँ और सर्वर से नाम पूछ रही हूँ…</string>
+    <string name="medicine_saved">यह दवाई आपकी सूची में है।</string>
+    <string name="medicine_saved_list">सहेजी दवाईयाँ</string>
+    <string name="medicine_name_label">दवाई: %1$s</string>
+    <string name="medicine_time_label">समय: %1$s</string>
+    <string name="medicine_speak_when">यह %1$s है। इसे %2$s लें।</string>
+    <string name="medicine_not_saved">यह पैक पढ़ लिया। कब लेनी है चुनें, फिर सहेजें।</string>
+    <string name="medicine_save_pack">यह दवाई सहेजें</string>
+    <string name="medicine_name_unreadable">दवाई का नाम नहीं पढ़ सका। अच्छी रोशनी में स्थिर रखें और फिर कोशिश करें।</string>
+    <string name="medicine_ocr_empty">पैक नहीं पढ़ सका। अच्छी रोशनी में स्थिर रखें और फिर कोशिश करें।</string>
+    <string name="medicine_failed">यह फोटो जाँच नहीं सकी। फिर कोशिश करें।</string>
+    <string name="medicine_camera_denied">कैमरा अनुमति नहीं मिली। गैलरी से फोटो चुन सकते हैं।</string>
+    <string name="medicine_notice">आसरा डॉक्टर नहीं है। कोई दवाई लेने से पहले डॉक्टर या फार्मासिस्ट से पूछें।</string>
+</resources>

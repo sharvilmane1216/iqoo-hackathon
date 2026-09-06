@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_medicine_pack">Medicine photo</string>
+    <string name="medicine_pack_title">Medicine photo</string>
+    <string name="medicine_check_title">Check medicine</string>
+    <string name="medicine_save_title">Save medicine pack</string>
+    <string name="medicine_back">Back</string>
+    <string name="medicine_pack_detail">Photograph the pack.</string>
+    <string name="medicine_check_detail">Photograph the pack. The printed text is sent to the server to name the medicine. If that name is saved, Aasra tells you when to take it.</string>
+    <string name="medicine_save_detail">Photograph the pack. The printed text is sent to the server to name the medicine; you choose when to take it, then save.</string>
+    <string name="medicine_need_cloud">Internet is needed to name this medicine. Check the connection and try again.</string>
+    <string name="medicine_check_missing">This pack is not saved. Save it from Settings, Medicines.</string>
+    <string name="medicine_already_saved">This pack is already saved.</string>
+    <string name="medicine_take_pack">Photograph pack</string>
+    <string name="medicine_choose_pack">Choose pack photo</string>
+    <string name="medicine_reading">Reading the pack and asking the server for the name…</string>
+    <string name="medicine_saved">This medicine is on your list.</string>
+    <string name="medicine_saved_list">Saved medicines</string>
+    <string name="medicine_name_label">Medicine: %1$s</string>
+    <string name="medicine_time_label">Time: %1$s</string>
+    <string name="medicine_speak_when">This is %1$s. Take it %2$s.</string>
+    <string name="medicine_not_saved">I read this pack. Choose when to take it, then save.</string>
+    <string name="medicine_save_pack">Save this medicine</string>
+    <string name="medicine_name_unreadable">I could not read a medicine name. Hold the pack still in good light and try again.</string>
+    <string name="medicine_ocr_empty">I could not read the pack. Hold it still in good light and try again.</string>
+    <string name="medicine_failed">I could not check this photo. Try again.</string>
+    <string name="medicine_camera_denied">Camera access was not granted. You can still choose a photo from the gallery.</string>
+    <string name="medicine_notice">Aasra is not a doctor. Ask your doctor or pharmacist before taking any medicine.</string>
+</resources>
