@@ -47,23 +47,43 @@ Call and SMS go through a voice confirm gate. SOS calls the primary contact and 
 - sherpa-onnx, llama.cpp (Llamatik)
 - OkHttp to `https://api.callmissed.com`
 
-## Build
+## How to run
 
-Needs Android Studio (JDK 17), NDK for native libs, and an arm64 phone or emulator.
+Needs Android Studio (Ladybug or newer), JDK 17, Android SDK 36, NDK, and an **arm64-v8a** phone (Android 10+). x86 emulators are a poor fit: the app filters ABI to `arm64-v8a`.
+
+### 1. Clone
+
+```bash
+git clone --recurse-submodules https://github.com/sharvilmane1216/iqoo-hackathon.git
+cd iqoo-hackathon
+```
+
+If you already cloned without submodules:
+
+```bash
+git submodule update --init --recursive
+```
+
+### 2. Local config
 
 ```bash
 cp local.defaults.properties local.properties
-# add CALLMISSED_API_KEY=cm_...  (from console.callmissed.com)
-# sdk.dir=... is also required for a local Android SDK
-
-./gradlew :app:assembleDebug
 ```
 
-`local.properties` is gitignored. Do not commit a real key. Without a key, cloud features stay off and the app stays on the on-device path.
+Open `local.properties` and set:
 
-## On-device models
+```
+sdk.dir=/path/to/Android/sdk
+CALLMISSED_API_KEY=cm_your_key
+```
 
-Large weights are kept on the machine that builds the APK. GitHub rejects files over 100 MB, so these stay out of git:
+Get a key at [console.callmissed.com](https://console.callmissed.com) with `llm`, `stt`, `tts`, and `search`. `local.properties` is gitignored. Do not commit a real key. Without a key, cloud features stay off and the app uses the on-device path only.
+
+Android Studio writes `sdk.dir` for you if you open the project once (File → Open the repo root).
+
+### 3. On-device model files
+
+Large weights are not in git (GitHub rejects files over 100 MB). Put these on disk before a full offline build:
 
 | File | Use |
 |---|---|
@@ -72,7 +92,49 @@ Large weights are kept on the machine that builds the APK. GitHub rejects files 
 | `app/src/main/assets/models/hi-hinglish-swift/decoder.int8.onnx` | Hinglish STT |
 | `app/src/main/assets/models/kokoro-int8-multi-lang-v1_0/model.int8.onnx` | Local TTS |
 
-Copy them into those paths on a checkout that already has the smaller sidecar files (`tokens.txt`, encoder/joiner, Piper, Silero). Desktop fetch helper: `./scripts/download_models.sh`.
+The repo already has the smaller sidecar files (`tokens.txt`, Zipformer, Piper, Silero). Copy the four files above from a teammate machine that already built the APK, or fetch related weights with:
+
+```bash
+./scripts/download_models.sh
+```
+
+Then place the listed files at those exact paths.
+
+### 4. Build and install
+
+**Android Studio**
+
+1. Open the repo root (the folder with `settings.gradle.kts`).
+2. Trust the Gradle project and wait for sync.
+3. Plug in an arm64 phone, enable USB debugging, accept the RSA prompt.
+4. Select the `app` run configuration.
+5. Run (green play). Studio installs `com.aasra.companion` and opens `MainActivity`.
+
+**Command line**
+
+```bash
+export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+./gradlew :app:assembleDebug
+adb devices
+adb install -r -g --no-streaming app/build/outputs/apk/debug/app-debug.apk
+adb shell am start -n com.aasra.companion/.MainActivity
+```
+
+`-g` grants runtime permissions at install. On some phones (including some iQOO / vivo builds) the OS still shows a mic or phone-permission dialog the first time you talk or call.
+
+The debug APK is large (bundled models, a few GB) if the GGUF and ONNX files are present. `--no-streaming` avoids adb timeouts on a big install.
+
+### 5. First launch
+
+1. Allow microphone when asked. Talk will not hear you without it.
+2. Finish onboarding (name, Hindi or English, emergency contact if you want SOS).
+3. Home: **Talk to AASRA**, **Scan medicine**, **Reminders**, **Emergency assistance**.
+4. Settings: voice speed, Offline vs Hybrid, medicines, Health Connect, extra contacts.
+5. For Hybrid / cloud talk, the phone needs internet and a real `CALLMISSED_API_KEY`.
+
+Health numbers appear only if Health Connect (and a watch app, if you use one) already wrote steps, heart rate, or SpO₂.
+
+Emergency assistance opens a confirm dialog, then calls the primary contact and SMS saved contacts. It does not dial 112.
 
 ## Run modes
 
