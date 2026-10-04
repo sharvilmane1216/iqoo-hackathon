@@ -1,6 +1,6 @@
 # Aasra
 
-**Team Turtle** — [iQOO City Battles 2026](https://github.com/sharvilmane1216/iqoo-hackathon)  
+**Team Turtle** — [Genspark Hackathon](https://github.com/sharvilmane1216/iqoo-hackathon)  
 Voice companion for elderly users. Hindi + English. No Aasra server.
 
 Package `com.aasra.companion`. The phone talks to Android (calls, SMS, alarms, Health Connect) and to [CallMissed](https://api.callmissed.com).
@@ -13,7 +13,7 @@ The repo ships a **dummy** key (`cm_dummy_get_your_key_from_callmissed`) so the 
 |---|---|
 | One line | Speak, and the phone answers — time, reminders, medicines, family call — on-device first, CallMissed when Hybrid is online. |
 | Problem | Many older people cannot use small icons or English-only assistants. They need a large Talk button, Hindi, and family SOS they can confirm. |
-| Why iQOO | Snapdragon + 12 GB RAM can run Zipformer / IndicConformer / Qwen GGUF locally. Hybrid is the fallback if the venue Wi-Fi dies. |
+| Why on-device | Zipformer / IndicConformer / Qwen GGUF run locally on the phone, so the core flow works with no network. Hybrid is the fallback if the venue Wi-Fi dies. |
 | No backend | Requirement: serverless. Key lives in `local.properties` → `BuildConfig` for the weekend only. |
 | Languages | Hindi and English in Settings. Home copy follows that choice. |
 | Safety | Call / SMS / SOS ask before they fire. SOS is the primary contact + SMS, not 112. The model prompt says not to give dosages. |
@@ -43,7 +43,7 @@ Have Hybrid + a CallMissed key on the APK, one saved emergency contact you are w
 
 ### What we did not put in git
 
-- Screenshots / fallback video — capture on the demo iQOO; do not commit a staged mock UI.
+- Screenshots / fallback video — capture on the demo phone; do not commit a staged mock UI.
 - Release keystore — keep it off git.
 - Model files over 100 MB — copy from the build laptop (How to run §3).
 - Real `CALLMISSED_API_KEY` — dummy only in git; your `cm_...` key stays in `local.properties`.
